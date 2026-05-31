@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Deployment Interface</title>
+    <link rel="stylesheet" href="config.css">
+    <script src="config.js" defer></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <h1>Windows <span>Setup</span></h1>
+        <div class="subtitle">System Architecture & Deployment Interface</div>
+        
+        <div class="segmented-control">
+            <button id="nav-software" class="segment-btn nav-btn active" onclick="swView('software')">Software Index</button>
+            <button id="nav-system" class="segment-btn nav-btn" onclick="swView('system')">System Rules</button>
+        </div>
+    </header>
+
+    <div class="search-box">
+        <input type="text" id="search" autocomplete="off" spellcheck="false" placeholder="Search tweaks, commands, software... (Ctrl+F)">
+    </div>
+
+    <div id="view-software" class="view-section active"></div>
+    <div id="view-system" class="view-section"></div>
+</div>
+
+</body>
+</html>
