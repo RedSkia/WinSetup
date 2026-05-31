@@ -3,7 +3,7 @@
 // Tags: "User Interface", "Administrator", "Danger", "Privacy", "Performance", "Software", "Feature", "Store", "Bundle"
 // Variables: [VAR:Prompt Text]
 // ==========================================
-const CONFIG = {
+window.CONFIG = {
     software: [
         { 
             title: "Proton Suite", 
@@ -259,4 +259,122 @@ const CONFIG = {
             configs: [{
                 title: "Kill Telemetry",
                 apply: 'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection" /v "AllowTelemetry" /t REG_DWORD /d "0" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo" /v "Enabled" /t REG_DWORD /d "0" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" /v "Start_TrackProgs" /t REG_DWORD /d "0" /f',
-                revert: 'reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection" /v "AllowTelemetry" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo" /v "Enabled" /t
+                revert: 'reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection" /v "AllowTelemetry" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo" /v "Enabled" /t REG_DWORD /d "1" /f'
+            }]
+        },
+        {
+            title: "Disable Consumer Features & Ads",
+            tags: ["Privacy", "Administrator"],
+            desc: "Blocks Windows from auto-installing bloatware (Candy Crush, TikTok) and stops OneDrive ads in File Explorer.",
+            configs: [{
+                title: "Disable Ads",
+                apply: 'reg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent" /v "DisableWindowsConsumerFeatures" /t REG_DWORD /d "1" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" /v "ShowSyncProviderNotifications" /t REG_DWORD /d "0" /f',
+                revert: 'reg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent" /v "DisableWindowsConsumerFeatures" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" /v "ShowSyncProviderNotifications" /t REG_DWORD /d "1" /f'
+            }]
+        },
+        {
+            title: "Disable Web Search in Start Menu",
+            tags: ["Privacy"],
+            desc: "Stops the Start Menu from pinging Bing servers, ensuring local searches are instantaneous and private.",
+            configs: [{
+                title: "Kill Bing Web Search",
+                apply: 'reg add "HKCU\\Software\\Policies\\Microsoft\\Windows\\Explorer" /v "DisableSearchBoxSuggestions" /t REG_DWORD /d "1" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search" /v "BingSearchEnabled" /t REG_DWORD /d "0" /f',
+                revert: 'reg delete "HKCU\\Software\\Policies\\Microsoft\\Windows\\Explorer" /v "DisableSearchBoxSuggestions" /f\nreg delete "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search" /v "BingSearchEnabled" /f'
+            }]
+        },
+        {
+            title: "Remove Copilot & AI Features",
+            tags: ["User Interface", "Privacy", "Administrator"],
+            desc: "Completely disables the Windows 11 Copilot integration at the policy level, removing it from the taskbar and system.",
+            configs: [{
+                title: "Disable Copilot",
+                apply: 'reg add "HKCU\\Software\\Policies\\Microsoft\\Windows\\WindowsCopilot" /v "TurnOffWindowsCopilot" /t REG_DWORD /d "1" /f',
+                revert: 'reg delete "HKCU\\Software\\Policies\\Microsoft\\Windows\\WindowsCopilot" /v "TurnOffWindowsCopilot" /f'
+            }]
+        },
+        {
+            title: "Disable Setup Nag Screen",
+            tags: ["User Interface", "Privacy"],
+            desc: "Permanently stops the full-screen 'Let's finish setting up your device' prompt from appearing after Windows Updates.",
+            configs: [{
+                title: "Disable Nag Screen",
+                apply: 'reg add "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\UserProfileEngagement" /v "ScoobeSystemSettingEnabled" /t REG_DWORD /d "0" /f',
+                revert: 'reg delete "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\UserProfileEngagement" /v "ScoobeSystemSettingEnabled" /f'
+            }]
+        },
+        {
+            title: "Disable Background Apps",
+            tags: ["Performance", "Administrator"],
+            desc: "Prevents unused UWP apps and Microsoft Edge from silently consuming RAM and CPU cycles in the background.",
+            configs: [{
+                title: "Kill Background Apps",
+                apply: 'reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications" /v "GlobalUserDisabled" /t REG_DWORD /d "1" /f\nreg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy" /v "LetAppsRunInBackground" /t REG_DWORD /d "2" /f\nreg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "StartupBoostEnabled" /t REG_DWORD /d "0" /f\nreg add "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "BackgroundModeEnabled" /t REG_DWORD /d "0" /f',
+                revert: 'reg delete "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications" /v "GlobalUserDisabled" /f\nreg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy" /v "LetAppsRunInBackground" /f\nreg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "StartupBoostEnabled" /f\nreg delete "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge" /v "BackgroundModeEnabled" /f'
+            }]
+        },
+        {
+            title: "Disable Fast Startup",
+            tags: ["Performance", "Administrator"],
+            desc: "Forces a true, clean boot every time you power on, preventing 90% of strange driver crashes and uptime bloat.",
+            configs: [{
+                title: "Disable Fast Startup",
+                apply: 'reg add "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power" /v "HiberbootEnabled" /t REG_DWORD /d "0" /f',
+                revert: 'reg add "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power" /v "HiberbootEnabled" /t REG_DWORD /d "1" /f'
+            }]
+        },
+        {
+            title: "Disable Network Throttling (Gaming)",
+            tags: ["Performance", "Administrator"],
+            desc: "Stops Windows from throttling network packets for multimedia, dedicating 100% of network responsiveness to active games.",
+            configs: [{
+                title: "Disable Throttling",
+                apply: 'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile" /v "NetworkThrottlingIndex" /t REG_DWORD /d "4294967295" /f\nreg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile" /v "SystemResponsiveness" /t REG_DWORD /d "0" /f',
+                revert: 'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile" /v "NetworkThrottlingIndex" /t REG_DWORD /d "10" /f\nreg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile" /v "SystemResponsiveness" /t REG_DWORD /d "20" /f'
+            }]
+        },
+        {
+            title: "Verbose Boot Messages",
+            tags: ["User Interface", "Administrator"],
+            desc: "Replaces the spinning boot circle with detailed, real-time system operations (e.g., 'Applying computer settings...').",
+            configs: [{
+                title: "Enable Verbose Boot",
+                apply: 'reg add "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" /v "VerboseStatus" /t REG_DWORD /d "1" /f',
+                revert: 'reg delete "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" /v "VerboseStatus" /f'
+            }]
+        },
+        {
+            title: "Map User Folders to Target Drive",
+            tags: ["Danger", "Administrator"],
+            desc: "Redirects standard user folders (Desktop, Documents, Pictures) to a custom hard drive of your choice.",
+            configs: [{
+                title: "Remap Folders",
+                apply: 'mkdir "[VAR:Drive Letter (e.g., D)]:\\Desktop" "[VAR:Drive Letter (e.g., D)]:\\Documents" "[VAR:Drive Letter (e.g., D)]:\\Pictures" "[VAR:Drive Letter (e.g., D)]:\\Music" "[VAR:Drive Letter (e.g., D)]:\\Videos" "[VAR:Drive Letter (e.g., D)]:\\Downloads"\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v "Desktop" /t REG_EXPAND_SZ /d "[VAR:Drive Letter (e.g., D)]:\\Desktop" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v "Personal" /t REG_EXPAND_SZ /d "[VAR:Drive Letter (e.g., D)]:\\Documents" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v "My Pictures" /t REG_EXPAND_SZ /d "[VAR:Drive Letter (e.g., D)]:\\Pictures" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v "My Music" /t REG_EXPAND_SZ /d "[VAR:Drive Letter (e.g., D)]:\\Music" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v "My Video" /t REG_EXPAND_SZ /d "[VAR:Drive Letter (e.g., D)]:\\Videos" /f\nreg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v "{374DE290-123F-4565-9164-39C4925E467B}" /t REG_EXPAND_SZ /d "[VAR:Drive Letter (e.g., D)]:\\Downloads" /f',
+                revert: 'echo DANGER: Do not automate reversing this. Move files manually to C:\\Users\\Name first.'
+            }]
+        },
+        {
+            title: "Account Lockout Defense",
+            tags: ["Privacy", "Administrator"],
+            desc: "Bypass Windows Hello CAPTCHA & local retry limits.",
+            configs: [{
+                title: "Remove Limits",
+                apply: "net accounts /lockoutthreshold:0",
+                revert: "net accounts /lockoutthreshold:5"
+            }]
+        }
+    ]
+};
+
+// ==========================================
+// CONFIGURATION FORMATTING (MULTI-LINE)
+// ==========================================
+window.formatCode = (str) => {
+    if (!str) return "";
+    return str
+        .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/("(?:\\.|[^"\\])*")/g, '<span class="s-str">$1</span>')
+        .replace(/(\[[^\]]+\])/g, '<span class="s-key">$1</span>')
+        .replace(/\b(net|reg|add|delete|taskkill|start|explorer|accounts|mkdir|powercfg|label|dism|schtasks|powershell|echo)\b/gi, '<span class="s-cmd">$1</span>')
+        .replace(/(\s)(\/[a-zA-Z0-9_:]+|-h)/g, '$1<span class="s-arg">$2</span>')
+        .replace(/(\[VAR:[^\]]+\])/g, '<span class="s-var">$1</span>');
+};
